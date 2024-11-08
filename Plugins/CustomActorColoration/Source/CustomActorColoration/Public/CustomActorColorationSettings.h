@@ -53,4 +53,9 @@ public:
 	bool bUseColorationCollisionPreset = true;
 	UPROPERTY(EditDefaultsOnly, Config, Category="Physics")
 	TMap<FName, FLinearColor> CollisionPresetColorMap;
+
+	UPROPERTY(EditDefaultsOnly, Config, Category="Tags")
+	bool bUseColorationCustomTag = true;
+	UPROPERTY(EditDefaultsOnly, Config, Category="Tags")
+	FString ColorationCustomTagText = "";
 };

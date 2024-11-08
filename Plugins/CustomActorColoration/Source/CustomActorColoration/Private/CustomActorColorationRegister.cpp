@@ -120,6 +120,28 @@ UCustomActorColorationRegister::UCustomActorColorationRegister()
 				return FLinearColor::White;
 			});
 		}
+
+
+        // Custom Actor Tag
+        if (Settings->bUseColorationCustomTag)
+		{
+			FActorPrimitiveColorHandler::Get().RegisterPrimitiveColorHandler(TEXT("CustomTag"),LOCTEXT("CustomTag", "Custom Tag"),[](const UPrimitiveComponent* InPrimitiveComponent) -> FLinearColor
+			{
+				if (const AActor* OwnerActor = InPrimitiveComponent->GetOwner())
+				{
+					for (TArray<FName> ActorTags = OwnerActor->Tags; const FName& Tag : ActorTags)
+					{
+						if (Tag.ToString() == UCustomActorColorationSettings::Get()->ColorationCustomTagText)
+						{
+							return FLinearColor::Red;
+						}
+					}
+				}
+
+				return FLinearColor::White;
+
+			});
+        }
 	}
 #endif
 }
