@@ -58,4 +58,9 @@ public:
 	bool bUseColorationCustomTag = true;
 	UPROPERTY(EditDefaultsOnly, Config, Category="Tags")
 	FString ColorationCustomTagText = "";
+
+	UPROPERTY(EditDefaultsOnly, Config, Category="CustomInterface")
+	bool bUseColorationCustomInterface = true;
+	UPROPERTY(EditDefaultsOnly, Config,Category="CustomInterface")
+	TSubclassOf<UObject> CustomInterfaceUObject;
 };

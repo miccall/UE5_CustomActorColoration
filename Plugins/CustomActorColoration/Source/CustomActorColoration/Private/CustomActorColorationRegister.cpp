@@ -3,6 +3,7 @@
 #include "CustomActorColorationRegister.h"
 
 #include "CustomActorColorationSettings.h"
+#include "CustomColorationInterface.h"
 #include "GameFramework/ActorPrimitiveColorHandler.h"
 
 #define LOCTEXT_NAMESPACE "CustomActorColorationRegister"
@@ -120,8 +121,7 @@ UCustomActorColorationRegister::UCustomActorColorationRegister()
 				return FLinearColor::White;
 			});
 		}
-
-
+		
         // Custom Actor Tag
         if (Settings->bUseColorationCustomTag)
 		{
@@ -142,6 +142,32 @@ UCustomActorColorationRegister::UCustomActorColorationRegister()
 
 			});
         }
+
+		// Custom Interface
+		if (Settings->bUseColorationCustomInterface)
+		{
+			FActorPrimitiveColorHandler::Get().RegisterPrimitiveColorHandler(TEXT("CustomInterface"),LOCTEXT("CustomInterface", "Custom Interface"),[](const UPrimitiveComponent* InPrimitiveComponent) -> FLinearColor
+			{
+				if (!UCustomActorColorationSettings::Get()->CustomInterfaceUObject->GetDefaultObject()->Implements<UCustomColorationInterface>())
+					return FLinearColor::White;
+
+				const auto PackageObjectName = UCustomActorColorationSettings::Get()->CustomInterfaceUObject->GetDefaultObject()->GetClass()->GetClassPathName();
+				const auto PackageObject = PackageObjectName.GetPackageName().ToString() + "."+PackageObjectName.GetAssetName().ToString();
+				const auto BlueprintPath = "Blueprint '"+PackageObject+"'";
+
+				const UClass* BPClass = StaticLoadClass(UObject::StaticClass(), nullptr, *(BlueprintPath));
+				if (!BPClass)
+					return FLinearColor::White; 
+
+				UObject* CopyRulesIt = NewObject<UObject>(GetTransientPackage(),BPClass);
+				if (!CopyRulesIt)
+					return FLinearColor::White; 
+
+				if (ICustomColorationInterface::Execute_ColorationPick(CopyRulesIt,InPrimitiveComponent))
+					return FLinearColor::Red;
+				return FLinearColor::White;
+			});
+		}
 	}
 #endif
 }

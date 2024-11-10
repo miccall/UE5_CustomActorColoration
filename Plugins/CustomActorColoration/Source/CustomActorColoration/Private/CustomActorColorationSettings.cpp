@@ -3,6 +3,8 @@
 
 #include "CustomActorColorationSettings.h"
 
+#include "GameFramework/ActorPrimitiveColorHandler.h"
+
 void UCustomActorColorationSettings::FillCollisionPresetColorMap()
 {
 	TArray<TSharedPtr<FName>> ProfileNames;
@@ -46,7 +48,12 @@ UCustomActorColorationSettings::UCustomActorColorationSettings(const FObjectInit
 void UCustomActorColorationSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-
+	
 	FillCollisionPresetColorMap();
+	
+	if (bUseColorationCustomInterface)
+	{
+		FActorPrimitiveColorHandler::Get().RefreshPrimitiveColorHandler(TEXT("CustomInterface"),GEditor->GetEditorWorldContext().World());
+	}
 }
 #endif
